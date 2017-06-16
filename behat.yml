@@ -9,3 +9,8 @@ default:
                 - tests/features
     formatters:
         progress: true
+wip:
+    suites:
+        default:
+            filters:
+                tags: '@wip'
