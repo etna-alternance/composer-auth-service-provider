@@ -55,7 +55,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^que j\'instancie un nouvel objet$/
+     * @Given /^j\'instancie un nouvel objet$/
      */
     public function queJInstancieUnNouvelObjet()
     {
