@@ -57,7 +57,7 @@ class FeatureContext implements Context
     /**
      * @Given /^j\'instancie un nouvel objet$/
      */
-    public function queJInstancieUnNouvelObjet()
+    public function jInstancieUnNouvelObjet()
     {
         $this->app->register(new AuthServiceProvider());
     }
