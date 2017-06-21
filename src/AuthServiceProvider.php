@@ -50,10 +50,16 @@ class AuthServiceProvider implements ServiceProviderInterface
             $app["auth.authenticator_url"] = \trim($app["auth.authenticator_url"], "/");
 
             $file = $app["auth.public_key.tmp_path"];
-            if (!file_exists($file) || filemtime($file) < strtotime("-30seconds")) {
-                $key = file_get_contents("{$app["auth.authenticator_url"]}/public.key");
+            if (!file_exists($file)) {
+                // On lock l'accès au fichier, sinon accès concurrentiel et ttkc
+                // La suite est bloqué tant que le fichier n'est pas accessible
+                $fp = fopen($file, "w+");
+                if (flock($fp, LOCK_EX) || filemtime($file) < strtotime("-30seconds")) {
+                    $key = file_get_contents("{$app["auth.authenticator_url"]}/public.key");
 
-                file_put_contents($file, $key);
+                    file_put_contents($file, $key);
+                }
+                fclose($fp);
             }
             $this->rsa = RSA::loadPublicKey("file://" . $file);
         }
