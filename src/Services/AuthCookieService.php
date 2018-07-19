@@ -126,7 +126,7 @@ class AuthCookieService implements EventSubscriberInterface
             $user = $this->extract($req->cookies->get('authenticator'));
 
             // Je suis authentifié depuis trop longtemps
-            if ($this->expiration && strtotime("{$user->login_date}{$this->expiration}") < strtotime('now')) {
+            if (false !== $this->expiration && strtotime("{$user->login_date}{$this->expiration}") < strtotime('now')) {
                 $user = null;
             }
         }
@@ -189,18 +189,17 @@ class AuthCookieService implements EventSubscriberInterface
      */
     public function extract($cookie_string)
     {
+        $user = null;
+
         switch (true) {
             case false === ($cookie = base64_decode($cookie_string)):
-            case null === ($cookie = json_decode($cookie)):
+            case null  === ($cookie = json_decode($cookie)):
                 throw new HttpException(401, 'Cookie decode failed');
-                break;
             case !$this->rsa->verify($cookie->identity, $cookie->signature):
                 throw new HttpException(401, 'Bad Cookie Signature');
-                break;
             case false === ($user = base64_decode($cookie->identity)):
-            case null === ($user = json_decode($user)):
+            case null  === ($user = json_decode($user)):
                 throw new HttpException(401, 'Identity decode failed');
-                break;
         }
 
         return $user;
@@ -210,7 +209,7 @@ class AuthCookieService implements EventSubscriberInterface
      * Retourne la liste des différents events sur lesquels cette classe va intervenir
      * En l'occurence, avant d'accéder à une des fonction d'un des controlleurs.
      *
-     * @return array
+     * @return array<*,array<string|integer>>
      */
     public static function getSubscribedEvents()
     {
