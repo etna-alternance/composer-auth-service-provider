@@ -2,11 +2,13 @@
 /**
  * Définition de la classe AuthBundle.
  *
- * Point d'entrée de ce bundle qui gère l'authentication HTTP bas niveau (mon cookie est il valide, puis-je accéder à l'API)
+ * Point d'entrée de ce bundle qui gère l'authentication HTTP bas niveau
+ * (mon cookie est il valide, puis-je accéder à l'API)
  *
  * @author BLU <dev@etna-alternance.net>
- *
  */
+
+declare(strict_types=1);
 
 namespace ETNA\Auth;
 

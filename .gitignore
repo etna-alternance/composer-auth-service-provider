@@ -2,3 +2,5 @@ bin/
 tmp/
 vendor/
 composer.lock
+.DS_Store
+doc/

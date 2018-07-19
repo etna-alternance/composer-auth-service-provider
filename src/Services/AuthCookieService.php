@@ -7,6 +7,8 @@
  * @version 3.0.0
  */
 
+declare(strict_types=1);
+
 namespace ETNA\Auth\Services;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -55,7 +57,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param RSA $rsa La nouvelle clé RSA
      */
-    public function setRSA(RSA $rsa)
+    public function setRSA(RSA $rsa): void
     {
         $this->rsa = $rsa;
     }
@@ -66,7 +68,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param ContainerInterface $container Le container de l'application symfony
      */
-    public function handleRSA(ContainerInterface $container)
+    public function handleRSA(ContainerInterface $container): void
     {
         $rsa_filepath = $container->getParameter('auth.public_key.tmp_path');
         $auth_url     = $container->getParameter('auth.authenticator_url');
@@ -77,7 +79,7 @@ class AuthCookieService implements EventSubscriberInterface
             file_put_contents($rsa_filepath, $key);
         }
 
-        $this->rsa = \ETNA\RSA\RSA::loadPublicKey('file://'.$rsa_filepath);
+        $this->rsa = \ETNA\RSA\RSA::loadPublicKey('file://' . $rsa_filepath);
     }
 
     /**
@@ -85,7 +87,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param Request $req La requête HTTP
      */
-    public function authenticated(Request $req)
+    public function authenticated(Request $req): void
     {
         $user = $req->attributes->get('auth.user', null);
 
@@ -100,7 +102,7 @@ class AuthCookieService implements EventSubscriberInterface
      * @param Request $req   La requête HTTP
      * @param string  $group Le groupe à vérifier
      */
-    public function userHasGroup(Request $req, $group)
+    public function userHasGroup(Request $req, $group): void
     {
         $user = $req->attributes->get('auth.user', null);
 
@@ -116,7 +118,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param Request $req La requête HTTP
      */
-    public function addUserToRequest(Request $req)
+    public function addUserToRequest(Request $req): void
     {
         $user = null;
 
@@ -137,7 +139,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param FilterControllerEvent $event L'évènement
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         $controller = $event->getController();
 
@@ -223,7 +225,7 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param string $expiration Durée de vie du cookie généré
      */
-    public function setCookieExpiration($expiration)
+    public function setCookieExpiration($expiration): void
     {
         $this->expiration = $expiration;
     }

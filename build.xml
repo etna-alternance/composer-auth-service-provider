@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project name="etna/auth-service-provider" default="maintainability" basedir='.'>
+    <target name="maintainability"
+        depends="phploc, php-cs-fixer, phpcs, phpcpd, phpmd, behat">
+    </target>
+     <target name="phploc">
+        <exec executable="phploc" passthru="true" checkreturn="true">
+            <arg path="src/"/>
+        </exec>
+    </target>
+    <target name="php-cs-fixer">
+        <exec executable="php-cs-fixer" passthru="true" checkreturn="true">
+            <arg value="fix"/>
+            <arg path="src/"/>
+            <arg value="--rules=@PSR1,@PSR2,@Symfony,@Symfony:risky,@DoctrineAnnotation,@PHP56Migration,@PHP56Migration:risky,@PHP70Migration,@PHP70Migration:risky,@PHP71Migration,@PHP71Migration:risky,-binary_operator_spaces,-concat_space"/>
+            <arg value="--using-cache=no"/>
+            <arg value="--dry-run"/>
+            <arg value="--allow-risky=yes"/>
+            <arg value="--show-progress=dots"/>
+        </exec>
+    </target>
+    <target name="phpcs">
+        <exec executable="phpcs" passthru="true" checkreturn="true">
+            <arg value="-p"/>
+            <arg value="--standard=PSR12"/>
+            <arg path="src/"/>
+        </exec>
+    </target>
+    <target name="phpcpd">
+        <exec executable="phpcpd" passthru="true" checkreturn="true">
+            <arg value="--progress"/>
+            <arg path="src/"/>
+        </exec>
+    </target>
+    <target name="phpmd">
+        <exec executable="phpmd" passthru="true" checkreturn="true">
+            <arg path="src/"/>
+            <arg value="text"/>
+            <arg value="phpmd.xml"/>
+        </exec>
+    </target>
+    <target name="behat" description="Run behat test">
+        <exec executable="behat" passthru="true" checkreturn="true">
+            <arg value="--colors" />
+            <arg value="-p"/>
+            <arg value="ci"/>
+        </exec>
+    </target>
+    <target name="doc" description="Generate documentation">
+        <exec executable="phpdoc" passthru="true">
+            <arg value="--force" />
+        </exec>
+    </target>
+</project>

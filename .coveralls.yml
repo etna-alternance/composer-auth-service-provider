@@ -1,0 +1,2 @@
+coverage_clover: tmp/behat/coverage.clover.xml
+json_path: tmp/behat/coveralls-upload.json

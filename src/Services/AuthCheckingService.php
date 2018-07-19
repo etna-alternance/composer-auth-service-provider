@@ -7,6 +7,8 @@
  * @version 3.0.0
  */
 
+declare(strict_types=1);
+
 namespace ETNA\Auth\Services;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,7 +33,7 @@ class AuthCheckingService implements EventSubscriberInterface
      *
      * @param FilterControllerEvent $event L'évènement
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         $controller = $event->getController();
 
@@ -58,7 +60,7 @@ class AuthCheckingService implements EventSubscriberInterface
      *
      * @param Request $req La requête HTTP à examiner
      */
-    public function authBeforeFunction(Request $req)
+    public function authBeforeFunction(Request $req): void
     {
         // On autorise les OPTIONS sans auth
         if ('OPTIONS' === $req->getMethod()) {

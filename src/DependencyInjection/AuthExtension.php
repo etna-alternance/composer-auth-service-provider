@@ -7,6 +7,8 @@
  * @version 3.0.0
  */
 
+declare(strict_types=1);
+
 namespace ETNA\Auth\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -28,7 +30,7 @@ class AuthExtension extends Extension
      * @param array            $configs   Les éventuels paramètres
      * @param ContainerBuilder $container Le container de la configuration
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
@@ -37,7 +39,7 @@ class AuthExtension extends Extension
             $container->setParameter("auth.{$config_name}", $config_value);
         }
 
-        $root_dir     = realpath($container->getParameter('kernel.root_dir').'/../');
+        $root_dir     = realpath($container->getParameter('kernel.root_dir') . '/../');
         $tmp_key_path = "{$root_dir}/tmp/public-{$container->getParameter('kernel.environment')}.key";
 
         $container->setParameter('auth.app_name', $container->getParameter('application_name'));
@@ -45,7 +47,7 @@ class AuthExtension extends Extension
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__.'/../Resources/config')
+            new FileLocator(__DIR__ . '/../Resources/config')
         );
         $loader->load('services.yaml');
     }

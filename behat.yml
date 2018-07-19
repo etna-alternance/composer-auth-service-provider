@@ -31,7 +31,7 @@ ci:
         - '%paths.base%/features/suites'
       contexts:
         - ETNA\FeatureContext\CoverageContext:
-            coverage_path: /TestApp/tmp/behat/coverage
+            coverage_path: /tmp/behat/coverage
             whitelist:
                 - src
             blacklist:

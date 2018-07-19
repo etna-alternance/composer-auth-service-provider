@@ -7,6 +7,8 @@
  * @version 3.0.0
  */
 
+declare(strict_types=1);
+
 namespace ETNA\Auth;
 
 /**
