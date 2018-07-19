@@ -24,10 +24,5 @@ services:
         resource: '../app/Controller'
         tags: ['controller.service_arguments']
 
-    # Configuration du provider d'auth, ou on renseigne la classe qui sera utilisée
-    # Cette classe doit extends la classe fournie par la lib
-    ETNA\Auth\Services\AuthCheckingService:
-        class: 'App\Services\AuthCheckingService'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
