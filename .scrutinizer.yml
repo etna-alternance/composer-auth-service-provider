@@ -4,6 +4,11 @@ tools:
     php_analyzer: true
     external_code_coverage:
         timeout: 2000
+filter:
+    paths:
+        - src/
+    dependency_paths:
+        - vendor/
 checks:
     php:
         code_rating: true

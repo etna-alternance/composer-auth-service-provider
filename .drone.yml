@@ -1,10 +1,11 @@
-image: etna/drone-php7
+image: etna/drone-php7:php71
 env:
   - APPLICATION_ENV=test
   - COVERALLS_REPO_TOKEN=$$COVERALLS_TOKEN
   - COVERALLS_SERVICE_NAME=drone.io
 script:
-  - composer global require phpdocumentor/phpdocumentor
+  - composer global require phpdocumentor/phpdocumentor --no-interaction --prefer-dist --no-progress
+  - composer install --dev --no-interaction --prefer-dist --no-progress
   - composer phing
   - composer coveralls
 services:

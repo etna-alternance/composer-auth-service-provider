@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="etna/auth-service-provider" default="maintainability" basedir='.'>
     <target name="maintainability"
-        depends="phploc, php-cs-fixer, phpcs, phpcpd, phpmd, behat">
+        depends="phploc, php-cs-fixer, phpcs, phpcpd, phpmd, behat, ocular">
     </target>
      <target name="phploc">
         <exec executable="phploc" passthru="true" checkreturn="true">
@@ -50,5 +50,8 @@
         <exec executable="phpdoc" passthru="true">
             <arg value="--force" />
         </exec>
+    </target>
+    <target name="ocular">
+        <exec command="ocular code-coverage:upload --format=php-clover tmp/behat/coverage.clover.xml" passthru="true"/>
     </target>
 </project>
