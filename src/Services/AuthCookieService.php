@@ -1,4 +1,11 @@
 <?php
+/**
+ * Définition de la classe AuthCookieService.
+ *
+ * @author BLU <dev@etna-alternance.net>
+ *
+ * @version 3.0.0
+ */
 
 namespace ETNA\Auth\Services;
 
@@ -8,18 +15,27 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use ETNA\Auth\EtnaCookieAuthenticatedController;
 use ETNA\RSA\RSA;
 
+/**
+ * Cette classe décrit le service auth qui va intéragir directement avec
+ * le cookie authenticator contenu dans la requête HTTP.
+ */
 class AuthCookieService implements EventSubscriberInterface
 {
+    /** @var RSA La clé servant à la signature du cookie */
     private $rsa;
+    /** @var string|false Durée de vie du cookie, false dans le cas ou il n'expire pas */
     private $expiration;
 
+    /**
+     * Constructeur du service.
+     *
+     * @param ContainerInterface $container Le container de l'application symfony
+     */
     public function __construct(ContainerInterface $container)
     {
-        $this->setCookieExpiration($container->getParameter("auth.cookie_expiration"));
+        $this->setCookieExpiration($container->getParameter('auth.cookie_expiration'));
 
         if (!isset($this->rsa)) {
             $this->handleRSA($container);
@@ -27,69 +43,76 @@ class AuthCookieService implements EventSubscriberInterface
     }
 
     /**
-     * On détruit la clé RSA
+     * On détruit la clé RSA.
      */
     public function __destruct()
     {
         unset($this->rsa);
     }
 
+    /**
+     * Modifie la clé RSA du service.
+     *
+     * @param RSA $rsa La nouvelle clé RSA
+     */
     public function setRSA(RSA $rsa)
     {
         $this->rsa = $rsa;
     }
 
+    /**
+     * Cette fonction s'occupe de maintenir la fraîcheur de la version locale de la clé publique.
+     * Si cette dernière n'existe pas, ou qu'elle à atteint une certaine durée de vie, on la remplace.
+     *
+     * @param ContainerInterface $container Le container de l'application symfony
+     */
     public function handleRSA(ContainerInterface $container)
     {
-        $rsa_filepath = $container->getParameter("auth.public_key.tmp_path");
-        $auth_url     = $container->getParameter("auth.authenticator_url");
+        $rsa_filepath = $container->getParameter('auth.public_key.tmp_path');
+        $auth_url     = $container->getParameter('auth.authenticator_url');
 
-        if (!file_exists($rsa_filepath) || filemtime($rsa_filepath) < strtotime("-30seconds")) {
+        if (!file_exists($rsa_filepath) || filemtime($rsa_filepath) < strtotime('-30seconds')) {
             $key = file_get_contents("{$auth_url}/public.key");
 
             file_put_contents($rsa_filepath, $key);
         }
 
-        $this->rsa = \ETNA\RSA\RSA::loadPublicKey("file://" . $rsa_filepath);
+        $this->rsa = \ETNA\RSA\RSA::loadPublicKey('file://'.$rsa_filepath);
     }
 
     /**
-     * S'assure que la requête contient bien des informations concernant une authentification
+     * S'assure que la requête contient bien des informations concernant une authentification.
      *
-     * @param  Request $req La requête HTTP
-     *
-     * @return null
+     * @param Request $req La requête HTTP
      */
     public function authenticated(Request $req)
     {
-        $user = $req->attributes->get("auth.user", null);
+        $user = $req->attributes->get('auth.user', null);
 
         if (null === $user || null === $user->login_date) {
-            throw new HttpException(401, "Unauthorized");
+            throw new HttpException(401, 'Unauthorized');
         }
     }
 
     /**
-     * Vérifie la présence du rôle dans le user connecté
+     * Vérifie la présence du rôle dans le user connecté.
      *
-     * @param  Request $req   La requête HTTP
-     * @param  string  $group Le groupe à vérifier
-     *
-     * @return null
+     * @param Request $req   La requête HTTP
+     * @param string  $group Le groupe à vérifier
      */
     public function userHasGroup(Request $req, $group)
     {
-        $user = $req->attributes->get("auth.user", null);
+        $user = $req->attributes->get('auth.user', null);
 
         $this->authenticated($req);
 
         if (!in_array($group, $user->groups)) {
-            throw new HttpException(403, "Forbidden");
+            throw new HttpException(403, 'Forbidden');
         }
     }
 
     /**
-     * Ajoute l'utilisateur à la requête HTTP
+     * Ajoute l'utilisateur à la requête HTTP.
      *
      * @param Request $req La requête HTTP
      */
@@ -97,24 +120,22 @@ class AuthCookieService implements EventSubscriberInterface
     {
         $user = null;
 
-        if ($req->cookies->has("authenticator")) {
-            $user = $this->extract($req->cookies->get("authenticator"));
+        if ($req->cookies->has('authenticator')) {
+            $user = $this->extract($req->cookies->get('authenticator'));
 
             // Je suis authentifié depuis trop longtemps
-            if ($this->expiration && strtotime("{$user->login_date}{$this->expiration}") < strtotime("now")) {
+            if ($this->expiration && strtotime("{$user->login_date}{$this->expiration}") < strtotime('now')) {
                 $user = null;
             }
         }
 
-        $req->attributes->set("auth.user", $user);
+        $req->attributes->set('auth.user', $user);
     }
 
     /**
-     * C'est la fonction qui sera appelée par symfony lors d'un des events indiqué par getSubscribedEvents
+     * C'est la fonction qui sera appelée par symfony lors d'un des events indiqué par getSubscribedEvents.
      *
-     * @param  FilterControllerEvent $event L'évènement
-     *
-     * @return null
+     * @param FilterControllerEvent $event L'évènement
      */
     public function onKernelController(FilterControllerEvent $event)
     {
@@ -134,9 +155,10 @@ class AuthCookieService implements EventSubscriberInterface
     }
 
     /**
-     * Generate a new cookie with the identity $identity
+     * Generate a new cookie with the identity $identity.
      *
      * @param array $identity
+     *
      * @return string
      */
     public function generate($identity)
@@ -144,35 +166,38 @@ class AuthCookieService implements EventSubscriberInterface
         $cookie    = base64_encode(json_encode($identity));
         $signature = $this->rsa->sign($cookie);
 
-        if ($signature === null) {
-            throw new \Exception("Error signing cookie");
+        if (null === $signature) {
+            throw new \Exception('Error signing cookie');
         }
 
         $cookie = base64_encode(json_encode([
-            "identity"  => $cookie,
-            "signature" => $signature,
+            'identity'  => $cookie,
+            'signature' => $signature,
         ]));
 
         return $cookie;
     }
 
-
     /**
-     * Extract cookie information
+     * Extrait l'identité du cookie.
+     *
+     * @param string $cookie_string La valeur du cookie à parser
+     *
+     * @return stdClass Classe contenant les informations du User
      */
     public function extract($cookie_string)
     {
         switch (true) {
             case false === ($cookie = base64_decode($cookie_string)):
             case null === ($cookie = json_decode($cookie)):
-                throw new HttpException(401, "Cookie decode failed");
+                throw new HttpException(401, 'Cookie decode failed');
                 break;
             case !$this->rsa->verify($cookie->identity, $cookie->signature):
-                throw new HttpException(401, "Bad Cookie Signature");
+                throw new HttpException(401, 'Bad Cookie Signature');
                 break;
             case false === ($user = base64_decode($cookie->identity)):
             case null === ($user = json_decode($user)):
-                throw new HttpException(401, "Identity decode failed");
+                throw new HttpException(401, 'Identity decode failed');
                 break;
         }
 
@@ -181,7 +206,7 @@ class AuthCookieService implements EventSubscriberInterface
 
     /**
      * Retourne la liste des différents events sur lesquels cette classe va intervenir
-     * En l'occurence, avant d'accéder à une des fonction d'un des controlleurs
+     * En l'occurence, avant d'accéder à une des fonction d'un des controlleurs.
      *
      * @return array
      */
@@ -194,7 +219,7 @@ class AuthCookieService implements EventSubscriberInterface
     }
 
     /**
-     * Sette la valeur de l'expiration du cookie
+     * Sette la valeur de l'expiration du cookie.
      *
      * @param string $expiration Durée de vie du cookie généré
      */

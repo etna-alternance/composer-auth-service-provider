@@ -1,11 +1,26 @@
 <?php
+/**
+ * Définition de l'interface EtnaCookieAuthenticatedController.
+ *
+ * @author BLU <dev@etna-alternance.net>
+ *
+ * @version 3.0.0
+ */
 
 namespace ETNA\Auth;
 
 /**
- * On définit une interface que vont implémenter les controllers qui doivent avoir la vérification
- * du cookie dans la requête. Une simple implémentation de cette interface devrait suffire à trigger
- * les différents events nécessaires.
+ * Cette interface n'éxiste que pour définir les controlleurs qui seront soumis à la fonction authBeforeFunction.
+ *
+ * Il suffit de l'implémenter dans la classe du controlleur pour voir la magie opérer.
+ *
+ * Exemple:
+ *
+ * <pre>
+ * class MonControlleur extends Controller implements EtnaCookieAuthenticatedController
+ * </pre>
+ *
+ * @abstract
  */
 interface EtnaCookieAuthenticatedController
 {
