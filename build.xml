@@ -17,6 +17,7 @@
             <arg value="--dry-run"/>
             <arg value="--allow-risky=yes"/>
             <arg value="--show-progress=dots"/>
+            <arg value="--verbose"/>
         </exec>
     </target>
     <target name="phpcs">
