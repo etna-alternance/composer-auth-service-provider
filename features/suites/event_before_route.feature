@@ -51,15 +51,6 @@ Scénario: Appeler une route protégée sans être authentifié
     "Authorization Required"
     """
 
-Scénario: Appeler une route ouverte sans être authentifié
-    Quand       je fais un GET sur /open
-    Alors       le status HTTP devrait être 200
-    Et          je devrais avoir un résultat d'API en JSON
-    Et          le résultat devrait être identique au JSON suivant :
-    """
-    {}
-    """
-
 Scénario: Mes requêtes options devraient passer quoi qu'il arrive
     Quand       je fais un OPTIONS sur /restricted
     Alors       le status HTTP devrait être 200
@@ -67,27 +58,4 @@ Scénario: Mes requêtes options devraient passer quoi qu'il arrive
     Et          le résultat devrait être identique au JSON suivant :
     """
     {}
-    """
-
-Scénario: Appeler une route ouverte
-    Etant donné que je suis authentifié avec :
-    """
-    {
-        "id": 42,
-        "login": "crivis_s",
-        "login_date": "2013-08-13 14:35:00",
-        "groups": ["student"]
-    }
-    """
-    Quand       je fais un GET sur /open
-    Alors       le status HTTP devrait être 200
-    Et          je devrais avoir un résultat d'API en JSON
-    Et          le résultat devrait être identique au JSON suivant :
-    """
-    {
-        "id": 42,
-        "login": "crivis_s",
-        "login_date": "2013-08-13 14:35:00",
-        "groups": ["student"]
-    }
     """

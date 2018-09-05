@@ -3,3 +3,4 @@ tmp/
 vendor/
 .DS_Store
 doc/
+.php_cs.cache

@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
-use ETNA\Auth\EtnaCookieAuthenticatedController;
 
 /**
  * Cette classe est surtout un modèle de service permettant d'ajouter la logique du bundle.
@@ -47,9 +46,7 @@ class AuthCheckingService implements EventSubscriberInterface
             return;
         }
 
-        if ($controller[0] instanceof EtnaCookieAuthenticatedController) {
-            $this->authBeforeFunction($event->getRequest());
-        }
+        $this->authBeforeFunction($event->getRequest());
     }
 
     /**

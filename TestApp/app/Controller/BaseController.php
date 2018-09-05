@@ -7,10 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use ETNA\Auth\EtnaCookieAuthenticatedController;
 use ETNA\Auth\Services\AuthCookieService;
 
-class BaseController extends Controller implements EtnaCookieAuthenticatedController
+class BaseController extends Controller
 {
     /**
      * @Route("/restricted", methods={"GET"}, name="restricted")
