@@ -1,23 +1,21 @@
 <?php
 /**
- * Définition de la classe AuthCookieService.
+ * PHP version 7.1
  *
  * @author BLU <dev@etna-alternance.net>
- *
- * @version 3.0.0
  */
 
 declare(strict_types=1);
 
 namespace ETNA\Auth\Services;
 
+use ETNA\RSA\RSA;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use ETNA\RSA\RSA;
 
 /**
  * Cette classe décrit le service auth qui va intéragir directement avec
@@ -108,7 +106,7 @@ class AuthCookieService implements EventSubscriberInterface
 
         $this->authenticated($req);
 
-        if (!in_array($group, $user->groups)) {
+        if (!\in_array($group, $user->groups)) {
             throw new HttpException(403, 'Forbidden');
         }
     }
@@ -149,7 +147,7 @@ class AuthCookieService implements EventSubscriberInterface
          * This is not usual in Symfony but it may happen.
          * If it is a class, it comes in array format
          */
-        if (!is_array($controller)) {
+        if (!\is_array($controller)) {
             return;
         }
 
@@ -172,12 +170,10 @@ class AuthCookieService implements EventSubscriberInterface
             throw new \Exception('Error signing cookie');
         }
 
-        $cookie = base64_encode(json_encode([
+        return base64_encode(json_encode([
             'identity'  => $cookie,
             'signature' => $signature,
         ]));
-
-        return $cookie;
     }
 
     /**
@@ -193,12 +189,12 @@ class AuthCookieService implements EventSubscriberInterface
 
         switch (true) {
             case false === ($cookie = base64_decode($cookie_string)):
-            case null  === ($cookie = json_decode($cookie)):
+            case null === ($cookie = json_decode($cookie)):
                 throw new HttpException(401, 'Cookie decode failed');
             case !$this->rsa->verify($cookie->identity, $cookie->signature):
                 throw new HttpException(401, 'Bad Cookie Signature');
             case false === ($user = base64_decode($cookie->identity)):
-            case null  === ($user = json_decode($user)):
+            case null === ($user = json_decode($user)):
                 throw new HttpException(401, 'Identity decode failed');
         }
 

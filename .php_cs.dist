@@ -1,0 +1,55 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__ . "/src")
+;
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        "@PSR1" => true,
+        "@PSR2" => true,
+        "@Symfony" => true,
+        "@Symfony:risky" => true,
+        "@DoctrineAnnotation" => true,
+        "@PHP56Migration" => true,
+        "@PHP56Migration:risky" => true,
+        "@PHP70Migration" => true,
+        "@PHP70Migration:risky" => true,
+        "@PHP71Migration" => true,
+        "@PHP71Migration:risky" => true,
+        "binary_operator_spaces" => [
+            "align_double_arrow" => true,
+            "align_equals" => true
+        ],
+        "concat_space" => true,
+        "strict_comparison" => true,
+        "combine_consecutive_issets" => true,
+        "combine_consecutive_unsets" => true,
+        "comment_to_phpdoc" => true,
+        "compact_nullable_typehint" => true,
+        "explicit_indirect_variable" => true,
+        "explicit_string_variable" => true,
+        "header_comment" => [
+            "commentType" => "PHPDoc",
+            "header" => "PHP version 7.1\n@author BLU <dev@etna-alternance.net>",
+            "location" => "after_open",
+            "separate" => "bottom"
+        ],
+        "linebreak_after_opening_tag" => true,
+        "no_useless_else" => true,
+        "no_useless_return" => true,
+        "ordered_imports" => true,
+        "phpdoc_order" => true,
+        "psr0" => true,
+        "return_assignment" => true,
+        "visibility_required" => [
+            "elements" => ['property', 'method']
+        ],
+        "concat_space" => [
+            "spacing" => "one"
+        ]
+    ])
+    ->setFinder($finder)
+    ->setRiskyAllowed(true)
+    ->setUsingCache(false)
+;

@@ -12,11 +12,7 @@
         <exec executable="php-cs-fixer" passthru="true" checkreturn="true">
             <arg value="fix"/>
             <arg path="src/"/>
-            <arg value="--rules=@PSR1,@PSR2,@Symfony,@Symfony:risky,@DoctrineAnnotation,@PHP56Migration,@PHP56Migration:risky,@PHP70Migration,@PHP70Migration:risky,@PHP71Migration,@PHP71Migration:risky,-binary_operator_spaces,-concat_space"/>
-            <arg value="--using-cache=no"/>
             <arg value="--dry-run"/>
-            <arg value="--allow-risky=yes"/>
-            <arg value="--show-progress=dots"/>
             <arg value="--verbose"/>
         </exec>
     </target>

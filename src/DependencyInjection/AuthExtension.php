@@ -1,20 +1,18 @@
 <?php
 /**
- * Définition de la classe AuthExtension.
+ * PHP version 7.1
  *
  * @author BLU <dev@etna-alternance.net>
- *
- * @version 3.0.0
  */
 
 declare(strict_types=1);
 
 namespace ETNA\Auth\DependencyInjection;
 
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * On définit cette classe pour personnaliser le processus de parsing de la configuration de notre bundle.

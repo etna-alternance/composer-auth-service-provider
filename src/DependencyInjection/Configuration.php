@@ -1,10 +1,8 @@
 <?php
 /**
- * Définition de la classe Configuration.
+ * PHP version 7.1
  *
  * @author BLU <dev@etna-alternance.net>
- *
- * @version 3.0.0
  */
 
 declare(strict_types=1);

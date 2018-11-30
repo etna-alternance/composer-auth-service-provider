@@ -1,9 +1,6 @@
 <?php
 /**
- * Définition de la classe AuthBundle.
- *
- * Point d'entrée de ce bundle qui gère l'authentication HTTP bas niveau
- * (mon cookie est il valide, puis-je accéder à l'API)
+ * PHP version 7.1
  *
  * @author BLU <dev@etna-alternance.net>
  */

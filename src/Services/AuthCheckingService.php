@@ -1,10 +1,8 @@
 <?php
 /**
- * Définition de la classe AuthCheckingService.
+ * PHP version 7.1
  *
  * @author BLU <dev@etna-alternance.net>
- *
- * @version 3.0.0
  */
 
 declare(strict_types=1);
@@ -42,7 +40,7 @@ class AuthCheckingService implements EventSubscriberInterface
          * This is not usual in Symfony but it may happen.
          * If it is a class, it comes in array format
          */
-        if (!is_array($controller)) {
+        if (!\is_array($controller)) {
             return;
         }
 
