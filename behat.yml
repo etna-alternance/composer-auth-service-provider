@@ -1,11 +1,51 @@
-# behat.yml
 default:
-    autoload:
-        "": tests/bootstrap
+  formatters:
+    progress:
+        decorated:           true
+        verbose:             true
+        time:                true
+        language:            fr
+        output_path:         null
+        multiline_arguments: true
 
-    suites:
-        default:
-            paths:
-                - tests/features
-    formatters:
-        progress: true
+  suites:
+    default:
+      paths:
+        - '%paths.base%/features/suites'
+      contexts:
+        - FeatureContext:
+            cookie_service:   '@ETNA\Auth\Services\AuthCookieService'
+            checking_service: '@TestApp\Services\AuthCheckingService'
+        - ETNA\FeatureContext\ApiContext
+        - ETNA\FeatureContext\FixedDateContext:
+            date: "2013-08-13 14:42:42"
+  extensions:
+    Behat\Symfony2Extension:
+      kernel:
+        class: TestApp\Kernel
+
+ci:
+  suites:
+    default:
+      paths:
+        - '%paths.base%/features/suites'
+      contexts:
+        - ETNA\FeatureContext\CoverageContext:
+            coverage_path: /tmp/behat/coverage
+            whitelist:
+                - src
+            blacklist:
+                - vendor
+                - bin
+                - tmp
+                - Tests
+        - FeatureContext:
+            cookie_service:   '@ETNA\Auth\Services\AuthCookieService'
+            checking_service: '@TestApp\Services\AuthCheckingService'
+        - ETNA\FeatureContext\ApiContext
+        - ETNA\FeatureContext\FixedDateContext:
+            date: "2013-08-13 14:42:42"
+  extensions:
+    Behat\Symfony2Extension:
+      kernel:
+        class: TestApp\Kernel

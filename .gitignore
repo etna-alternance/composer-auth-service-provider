@@ -1,4 +1,6 @@
 bin/
 tmp/
 vendor/
-composer.lock
+.DS_Store
+doc/
+.php_cs.cache

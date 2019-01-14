@@ -1,0 +1,13 @@
+services:
+    auth.cookie_service:
+        autoconfigure: true
+        autowire: true
+        class: 'ETNA\Auth\Services\AuthCookieService'
+
+    auth.checking_service:
+        abstract: true
+        autowire: true
+
+    ETNA\Auth\Services\AuthCookieService:   '@auth.cookie_service'
+    ETNA\Auth\Services\AuthCheckingService: '@auth.checking_service'
+

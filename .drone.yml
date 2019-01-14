@@ -1,20 +1,22 @@
-image: etna/drone-php
+image: etna/drone-php7:php71
 env:
-  - APPLICATION_ENV=drone
-  - RABBITMQ_VHOST="/test-behat"
+  - APPLICATION_ENV=test
+  - COVERALLS_REPO_TOKEN=$$COVERALLS_TOKEN
+  - COVERALLS_SERVICE_NAME=drone.io
 script:
-  - mkdir -p tmp/keys
-  - openssl genrsa  -out tmp/keys/private.key 2048
-  - openssl rsa -in tmp/keys/private.key -pubout -out tmp/keys/public.key
-  - composer self-update
-  - composer install --dev --no-interaction --prefer-source
-  - vendor/bin/behat -f progress
+  - composer global require phpdocumentor/phpdocumentor --no-interaction --prefer-dist --no-progress
+  - composer install --dev --no-interaction --prefer-dist --no-progress
+  - composer phing
+  - composer coveralls
+services:
+  - bluetna/drone-elasticsearch
+  - bluetna/drone-mariadb
+  - rabbitmq
 notify:
   slack:
-    team : {{slackTeam}}
-    channel: {{slackChannel}}
+    webhook_url: $$SLACK_WEBHOOK_URL
     username: drone
-    token: {{slackToken}}
+    channel: $$SLACK_CHANNEL
     on_started: true
     on_failure: true
     on_success: true

@@ -2,7 +2,13 @@ tools:
     php_sim: true
     php_pdepend: true
     php_analyzer: true
-
+    external_code_coverage:
+        timeout: 2000
+filter:
+    paths:
+        - src/
+    dependency_paths:
+        - vendor/
 checks:
     php:
         code_rating: true
@@ -80,7 +86,7 @@ checks:
         no_space_before_semicolon: true
         no_space_around_object_operator: true
         no_short_variable_names:
-            minimum: '2'
+            minimum: '3'
         no_short_open_tag: true
         no_short_method_names:
             minimum: '4'
