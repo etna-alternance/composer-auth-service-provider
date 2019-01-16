@@ -45,12 +45,19 @@
         "phing/phing": "^2.16",
         "php-coveralls/php-coveralls": "^2.1",
         "scrutinizer/ocular": "^1.5",
-        "etna/composer-behat-utils": "^v3.0.0-alpha.1"
+        "etna/composer-behat-utils": "^v3.0.0-alpha.1",
+        "phpstan/phpstan": "^0.10.8",
+        "povils/phpmnd": "^2.0",
+        "phpmetrics/phpmetrics": "^2.4"
     },
     "scripts": {
         "test": "behat",
         "behat": "behat",
         "phing": "phing",
-        "coveralls": "php-coveralls"
+        "coveralls": "php-coveralls",
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
     }
 }

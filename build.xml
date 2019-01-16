@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="etna/auth-service-provider" default="maintainability" basedir='.'>
+<project name="etna/acl-service-provider" default="maintainability" basedir='.'>
     <target name="maintainability"
-        depends="phploc, php-cs-fixer, phpcs, phpcpd, phpmd, behat, ocular">
+        depends="phploc, php-cs-fixer, phpcs, phpcpd, phpmd, phpmnd, behat, doc, ocular">
     </target>
      <target name="phploc">
         <exec executable="phploc" passthru="true" checkreturn="true">
@@ -36,6 +36,20 @@
             <arg value="phpmd.xml"/>
         </exec>
     </target>
+    <target name="phpstan">
+        <exec executable="phpstan" passthru="true" checkreturn="true">
+            <arg value="analyze"/>
+            <arg path="src/"/>
+            <arg value="--level=7"/>
+        </exec>
+    </target>
+    <target name="phpmnd">
+        <exec executable="phpmnd" passthru="true" checkreturn="true">
+            <arg path="src/"/>
+            <arg value="--non-zero-exit-on-violation"/>
+            <arg value="--include-numeric-string"/>
+        </exec>
+    </target>
     <target name="behat" description="Run behat test">
         <exec executable="behat" passthru="true" checkreturn="true">
             <arg value="--colors" />
@@ -44,9 +58,7 @@
         </exec>
     </target>
     <target name="doc" description="Generate documentation">
-        <exec executable="phpdoc" passthru="true">
-            <arg value="--force" />
-        </exec>
+        <exec command="phpdoc --force --no-interaction" passthru="true"/>
     </target>
     <target name="ocular">
         <exec command="ocular code-coverage:upload --format=php-clover tmp/behat/coverage.clover.xml" passthru="true"/>

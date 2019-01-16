@@ -73,7 +73,7 @@ class AuthCheckingService implements EventSubscriberInterface
      * Retourne la liste des différents events sur lesquels cette classe va intervenir
      * En l'occurence, avant d'accéder à une des fonction d'un des controlleurs.
      *
-     * @return array<*,array<string|integer>>
+     * @return array<string,array<string|integer>>
      */
     public static function getSubscribedEvents()
     {

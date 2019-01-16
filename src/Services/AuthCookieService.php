@@ -166,10 +166,6 @@ class AuthCookieService implements EventSubscriberInterface
         $cookie    = base64_encode(json_encode($identity));
         $signature = $this->rsa->sign($cookie);
 
-        if (null === $signature) {
-            throw new \Exception('Error signing cookie');
-        }
-
         return base64_encode(json_encode([
             'identity'  => $cookie,
             'signature' => $signature,
@@ -181,11 +177,11 @@ class AuthCookieService implements EventSubscriberInterface
      *
      * @param string $cookie_string La valeur du cookie à parser
      *
-     * @return stdClass Classe contenant les informations du User
+     * @return \stdClass Classe contenant les informations du User
      */
     public function extract($cookie_string)
     {
-        $user = null;
+        $user = new \stdClass();
 
         switch (true) {
             case false === ($cookie = base64_decode($cookie_string)):
@@ -205,7 +201,7 @@ class AuthCookieService implements EventSubscriberInterface
      * Retourne la liste des différents events sur lesquels cette classe va intervenir
      * En l'occurence, avant d'accéder à une des fonction d'un des controlleurs.
      *
-     * @return array<*,array<string|integer>>
+     * @return array<string,array<string|integer>>
      */
     public static function getSubscribedEvents()
     {
