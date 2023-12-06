@@ -29,6 +29,46 @@ class AuthServiceProvider implements ServiceProviderInterface, BootableProviderI
         $this->rsa = $rsa;
     }
 
+    private function fetch_and_load_auth_public_key($app)
+    {
+        $app["auth.authenticator_url"] = \trim($app["auth.authenticator_url"], "/");
+        $file = $app["auth.public_key.tmp_path"];
+        
+        if (!file_exists($file)) {
+            $max_attempt = 5;
+            for ($attempt = 1; $attempt <= $max_attempt; $attempt++) {
+                // We use the common "write temp file" + "rename" pattern. This is guaranteed to be
+                // atomic if both files are on the same filesystem.
+                $tmp_key_file = tempnam(dirname($file), 'tmp_key');
+                $app["logs"]->info("Trying to fetch authenticator's public key, attempt {$attempt}/{$max_attempt}");
+                try {
+                    $key = file_get_contents("{$app["auth.authenticator_url"]}/public.key");
+                    $rsa = RSA::loadPublicKey($key);
+                    file_put_contents($tmp_key_file, $key);
+                    rename($tmp_key_file, $file);
+                    $app["logs"]->info("Saved valid authenticator's public key at {$file}.");
+                    return $rsa;
+                } catch (Exception $e) {
+                    $app["logs"]->warning(__FILE__ . ": failed to fetch and save authenticator's public key: " . $e->getMessage());
+                } finally {
+                    // cleanup temp file if it still exists.
+                    if (file_exists($tmp_key_file)) {
+                        unlink($tmp_key_file);
+                    }
+                }
+                if ($attempt < $max_attempt) {
+                    $app["logs"]->info("Waiting 1 second before next attempt.");
+                    sleep(1);
+                }
+            }
+            $app["logs"]->error(__FILE__ . ": failed to fetch authenticator after $max_attempt attempt. Giving up.");
+            return null;
+        } else {
+            return RSA::loadPublicKey("file://" . $file);
+        }
+    }
+
+    
     /**
      * Check configuration and load public key
      */
@@ -51,21 +91,7 @@ class AuthServiceProvider implements ServiceProviderInterface, BootableProviderI
                     break;
             }
 
-            $app["auth.authenticator_url"] = \trim($app["auth.authenticator_url"], "/");
-
-            $file = $app["auth.public_key.tmp_path"];
-            if (!file_exists($file)) {
-                // On lock l'accès au fichier, sinon accès concurrentiel et ttkc
-                // La suite est bloqué tant que le fichier n'est pas accessible
-                $fp = fopen($file, "w+");
-                if (flock($fp, LOCK_EX) || filemtime($file) < strtotime("-30seconds")) {
-                    $key = file_get_contents("{$app["auth.authenticator_url"]}/public.key");
-
-                    file_put_contents($file, $key);
-                }
-                fclose($fp);
-            }
-            $this->rsa = RSA::loadPublicKey("file://" . $file);
+            $this->rsa = $this->fetch_and_load_auth_public_key($app);
         }
     }
 
